@@ -33,6 +33,7 @@ JAX_DEFAULT: dict[str, Any] = {"I": 1j}
 TENSORFLOW_DEFAULT: dict[str, Any] = {}
 SYMPY_DEFAULT: dict[str, Any] = {}
 NUMEXPR_DEFAULT: dict[str, Any] = {}
+TORCHEXPR_DEFAULT: dict[str, Any] = {}
 
 # These are the namespaces the lambda functions will use.
 # These are separate from the names above because they are modified
@@ -47,6 +48,7 @@ JAX = JAX_DEFAULT.copy()
 TENSORFLOW = TENSORFLOW_DEFAULT.copy()
 SYMPY = SYMPY_DEFAULT.copy()
 NUMEXPR = NUMEXPR_DEFAULT.copy()
+TORCH = TORCHEXPR_DEFAULT.copy()
 
 
 # Mappings between SymPy and other modules function names.
@@ -99,6 +101,7 @@ JAX_TRANSLATIONS: dict[str, str] = {}
 TENSORFLOW_TRANSLATIONS: dict[str, str] = {}
 
 NUMEXPR_TRANSLATIONS: dict[str, str] = {}
+TORCHEXPR_TRANSLATIONS: dict[str, str] = {}
 
 # Available modules:
 MODULES = {
@@ -115,6 +118,7 @@ MODULES = {
         "from sympy import Integral, pi, oo, nan, zoo, E, I",)),
     "numexpr" : (NUMEXPR, NUMEXPR_DEFAULT, NUMEXPR_TRANSLATIONS,
                  ("import_module('numexpr')", )),
+    "torch": (TORCH, TORCHEXPR_DEFAULT, TORCHEXPR_TRANSLATIONS, ("import torch",)),
 }
 
 
@@ -817,6 +821,8 @@ def lambdify(args, expr, modules=None, printer=None, use_imps=True,
             from sympy.printing.tensorflow import TensorflowPrinter as Printer # type: ignore
         elif _module_present('sympy', namespaces):
             from sympy.printing.pycode import SymPyPrinter as Printer # type: ignore
+        elif _module_present('torch', namespaces):
+            from sympy.printing.pytorch import TorchPrinter as Printer
         else:
             from sympy.printing.pycode import PythonCodePrinter as Printer # type: ignore
         user_functions = {}
